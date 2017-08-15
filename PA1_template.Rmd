@@ -1,0 +1,80 @@
+---
+title: "R markdown for reproducible research"
+author: "AF"
+date: "August 15, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+Read in dataset
+
+```{r}
+activity <- read.csv(file = "activity.csv", header = TRUE)
+
+```
+
+Making a plot of the total number of steps per day
+
+
+```{r activity, echo=FALSE}
+hist(activity$steps)
+```
+
+Mean and median number of steps taken each day
+```{r}
+library("dplyr")
+meansteps <- aggregate(steps ~ date, data = activity, FUN = mean, rm.na=TRUE)
+meansteps
+aggregate(steps ~ date, data = activity, FUN = median, rm.na=TRUE)
+
+```
+
+Time series plot of average number of steps taken
+```{r, echo = TRUE}
+stepsinterval <- aggregate(steps~interval, data =activity, FUN =mean)
+plot(stepsinterval, type = "l")
+
+```
+
+Finding the 5 minute interval that contains the maximum number of steps on average
+```{r}
+stepsinterval[which.max(stepsinterval$steps),]
+
+```
+
+Code to describe and impute missing data -- number of missing step values
+```{r}
+sum(is.na(activity$steps))
+
+```
+
+Replacing the NA step values with overall mean
+```{r}
+activity$steps[is.na(activity$steps)] <- mean(activity$steps, na.rm = TRUE)
+
+```
+
+Histogram of the total number of steps after the values are imputed
+```{r}
+hist(activity$steps)
+```
+ 
+Panel plot comparing the average number of steps taken per 5-minute interval across weekdays and weekends
+```{r}
+activity$weekday <- weekdays(as.Date(activity$date, "%Y-%m-%d"))
+weekend <- filter(activity, weekday == "Saturday" | weekday == "Sunday")
+weekday <- filter(activity, weekday != "Saturday" & weekday != "Sunday")
+stepsweekend <- aggregate(steps~interval, data =weekend, FUN =mean)
+stepsweekday <- aggregate(steps~interval, data =weekday, FUN =mean)
+par(mfrow =c(2,1))
+plot(stepsweekend, type = "l")
+plot(stepsweekday, type = "l")
+
+```
+
+
