@@ -222,5 +222,10 @@ plot(stepsweekday, type = "l")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
-
+echo "# RepDataCoursera" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/afohner/RepDataCoursera.git
+git push -u origin master
 
